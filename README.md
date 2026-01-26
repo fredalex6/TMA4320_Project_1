@@ -27,35 +27,6 @@ Dersom dere får opp en versjon som er 3.13 eller nyere, er alt i orden. Hvis ik
 
 ## Installere pakker i et virtuelt miljø
 
-For å kjøre koden trenger dere å installere noen Python-pakker og sette opp et virtuelt miljø. Fra tidligere er dere nok mest vant med å bruke pip og venv for å håndtere dette. Et mer moderne alternativ er å bruke [uv](https://uv.astral.sh/). Personlig synes jeg dette er et enklere og bedre verktøy for dette formålet. Jeg vil beskrive begge fremgangsmåtene, og dere kan selv velge hvilket dere ønsker å bruke.
-
-### uv
-
-Følg instruksjonene på [Installing uv](https://docs.astral.sh/uv/getting-started/installation/) for å sette opp på deres maskin. Verifiser at uv er installert ved å kjøre
-
-```bash
-uv --version
-```
-
-Dersom dere ønsker kan dere også enkelt installere nyeste version av Python gjennom uv ved å kjøre (merk at dette er valgfritt)
-
-```bash
-uv python install
-```
-Til slutt genererer du et virtuelt miljø og installerer pakker spesifisert i `pyproject.toml` ved å bruke kommandoen
-
-```bash
-uv sync
-```
-
-Sett opp en kernel for Jupyter notebooks gjennom
-
-```bash
-uv run ipython kernel install --user --env VIRTUAL_ENV $(pwd)/.venv --name=project
-```
-
-Dersom du ikke får noen feil har alt gått fint!
-
 ### pip og venv
 
 Lag et virtuelt miljø
@@ -67,7 +38,7 @@ python -m venv .venv
 Aktiver det virtuelle miljøet
 
 ```bash
-source .venv/bin/activate
+. .venv\scripts\activate
 ```
 
 Oppdater pip inne i det virtuelle miljøet
@@ -98,7 +69,7 @@ Etter du har satt opp prosjektet kan det hende du må velge riktig Python Iinter
 Pass på at ditt virtuelle miljø er aktivert
 
 ```bash
-source .venv/bin/activate
+. .venv/bin/activate
 ```
 
 Vi kjører kode fra terminalen gjennom å skrive `python <filsti>`. Test at alt fungerer ved å kjøre `scripts/run_fdm.py` med kommandoen
