@@ -86,7 +86,7 @@ def _build_matrix(cfg: Config, dx: float, dy: float, dt: float) -> np.ndarray:
     A[idx(I[mask], J[mask]), idx(I[mask], J[mask] + 1)] = -ry
 
     return A
-
+ 
 
 def _build_rhs(cfg: Config, T_curr, X, Y, dx, dy, dt, t_next):
     """Build right-hand side for implicit system."""
