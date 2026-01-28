@@ -99,9 +99,9 @@ def forward(
     for W, b in nn_params[:-1]:
         a = sigma(a @ W + b)
 
-    w_out, b_out = nn_params[-1]
+    W_out, b_out = nn_params[-1]
    
-    out = (a @ w_out + b_out).squeeze()
+    out = (a @ W_out + b_out).squeeze()
 
     #######################################################################
     # Oppgave 4.1: Slutt
