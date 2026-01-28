@@ -69,7 +69,7 @@ Etter du har satt opp prosjektet kan det hende du må velge riktig Python Iinter
 Pass på at ditt virtuelle miljø er aktivert
 
 ```bash
-. .venv/bin/activate
+. .venv\scripts\activate
 ```
 
 Vi kjører kode fra terminalen gjennom å skrive `python <filsti>`. Test at alt fungerer ved å kjøre `scripts/run_fdm.py` med kommandoen
