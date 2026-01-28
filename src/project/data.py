@@ -25,8 +25,16 @@ def generate_training_data(
     # Oppgave 3.3: Start
     #######################################################################
 
-    # Placeholder initialization — replace this with your implementation
-    x, y, t, T_fdm, sensor_data = None, None, None, None, None
+    # Create grids
+    x = np.linspace(cfg.x_min, cfg.x_max, cfg.nx)
+    y = np.linspace(cfg.y_min, cfg.y_max, cfg.ny)
+    t = np.linspace(cfg.t_min, cfg.t_max, cfg.nt)
+
+    # Bruk den numeriske løseren for T
+    T_fdm = solve_heat_equation(cfg)[3]
+
+    # Lag sensor data
+    sensor_data = _generate_sensor_data(x, y, t, T_fdm, cfg)
 
     #######################################################################
     # Oppgave 3.3: Slutt
