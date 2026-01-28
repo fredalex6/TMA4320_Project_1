@@ -33,17 +33,25 @@ def solve_heat_equation(
     # Oppgave 3.2: Start
     #######################################################################
 
-    # Placeholder initialization — replace this with your implementation
+    # Initialisering av temperaturvektoren
     T = np.zeros((cfg.nt, cfg.nx, cfg.ny))
 
-    T[0,:,:] = cfg.T_outside
+    # Fyller første tidssteg med T_outside
+    T[0, :, :] = cfg.T_outside
 
-    for i in range(len(T)-1):
-        T_curr = T[i,:,:]
+    for i in range(0, cfg.nt-1):
+
+        T_curr = T[i, :, :]
         t_next = t[i+1]
-        A = _build_matrix(cfg,dx,dy,dt)
+
+        # Matrisen A i det lineære systemet
+        A = _build_matrix(cfg, dx, dy, dt)
+
+        # RHS
         b = _build_rhs(cfg, T_curr, X, Y, dx, dy, dt, t_next)
-        T[i+1,:,:] = np.linalg.solve(A,b).reshape(cfg.nx,cfg.ny)
+
+        # Oppdaterer arrayet T
+        T[i+1, :, :] = np.linalg.solve(A, b).reshape(cfg.nx, cfg.ny)
 
 
     #######################################################################
@@ -96,7 +104,7 @@ def _build_matrix(cfg: Config, dx: float, dy: float, dt: float) -> np.ndarray:
     A[idx(I[mask], J[mask]), idx(I[mask], J[mask] + 1)] = -ry
 
     return A
-
+ 
 
 def _build_rhs(cfg: Config, T_curr, X, Y, dx, dy, dt, t_next):
     """Build right-hand side for implicit system."""
