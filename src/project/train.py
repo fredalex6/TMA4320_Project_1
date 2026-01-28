@@ -36,6 +36,25 @@ def train_nn(
     #######################################################################
 
     # Update the nn_params and losses dictionary
+    def loss_func(nn_params,sensor_data, ic_epoch, cfg:Config):
+            return cfg.lambda_data*data_loss(nn_params,sensor_data, cfg) + cfg.lambda_ic*ic_loss(nn_params,ic_epoch, cfg)
+    
+    for _ in tqdm(range(cfg.num_epochs), desc="Training NN"):
+
+        ic_epoch, key = sample_ic(key, cfg)
+
+        data_loss_epoch = data_loss(nn_params,sensor_data, cfg)
+        ic_loss_epoch = ic_loss(nn_params,ic_epoch, cfg)
+        loss_func_epoch = loss_func(nn_params,sensor_data, ic_epoch, cfg)
+
+        losses["total"].append(loss_func_epoch)
+        losses["ic"].append(ic_loss_epoch)
+        losses["data"].append(data_loss_epoch)
+
+        value, grads = jax.value_and_grad(loss_func)(nn_params,sensor_data, ic_epoch, cfg)
+        nn_params, adam_state = adam_step( nn_params, grads, adam_state, lr=cfg.learning_rate)
+
+        
 
     #######################################################################
     # Oppgave 4.3: Slutt
