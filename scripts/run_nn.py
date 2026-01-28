@@ -33,7 +33,7 @@ def main():
         save_path="output/nn/nn_snapshots.png",
     )
     create_animation(
-        x, y, t, T_fdm, title="NN", save_path="output/nn/nn_animation.gif"
+        x, y, t, T_NN, title="NN", save_path="output/nn/nn_animation.gif"
     )
 
     #######################################################################
