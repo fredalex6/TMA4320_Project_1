@@ -88,9 +88,33 @@ def physics_loss(pinn_params, interior_points, cfg: Config):
     #######################################################################
     # Oppgave 5.2: Start
     #######################################################################
+    
+    nn_params = pinn_params['nn']
+    
+    def _pde_residual_scalar(xi, yi, ti):
+        """Compute PDE residual at a single point."""
+        alpha = jnp.exp(pinn_params["log_alpha"])
+        power = jnp.exp(pinn_params["log_power"])
+        
+        # Define function for predicted temperatures
+        def f(x, y, t):
+            return forward(nn_params, x, y, t, cfg)
 
-    # Placeholder initialization — replace this with your implementation
-    physics_loss_val = None
+        # Find partial derivatives
+        f_t  = grad(f, 2)(xi, yi, ti)
+        f_xx = grad(grad(f, 0), 0)(xi, yi, ti)
+        f_yy = grad(grad(f, 1), 1)(xi, yi, ti)
+
+        # Heat source
+        source = power * cfg.is_source(xi, yi)
+
+        return f_t - alpha * (f_xx + f_yy) - source
+    
+    # Vectorize the residuals
+    residuals = vmap(_pde_residual_scalar)(x, y, t)
+
+    # Evaluate the physics loss
+    physics_loss_val = jnp.mean(residuals**2)
 
     #######################################################################
     # Oppgave 5.2: Slutt
