@@ -38,10 +38,15 @@ def train_nn(
     # Define the loss function and compile with JIT
     @jax.jit
     def loss_func(nn_params,sensor_data, ic_epoch):
-        return cfg.lambda_data*data_loss(nn_params,sensor_data, cfg) + cfg.lambda_ic*ic_loss(nn_params,ic_epoch, cfg)
+        data_loss_epoch = data_loss(nn_params,sensor_data, cfg)
+        ic_loss_epoch = ic_loss(nn_params,ic_epoch, cfg)
+
+        loss_func_epoch = cfg.lambda_data*data_loss_epoch + cfg.lambda_ic*ic_loss_epoch
+
+        return loss_func_epoch, (data_loss_epoch, ic_loss_epoch)
     
     # Compile value_and_grad with JIT
-    value_and_grad = jax.jit(jax.value_and_grad(loss_func))
+    value_and_grad = jax.jit(jax.value_and_grad(loss_func, has_aux=True))
     
     for _ in tqdm(range(cfg.num_epochs), desc="Training NN"):
 
@@ -49,11 +54,10 @@ def train_nn(
         ic_epoch, key = sample_ic(key, cfg)
 
         # Estimate loss function for the sampled points and gradients
-        loss_func_epoch, grads = value_and_grad(nn_params,sensor_data, ic_epoch)
+        (loss_func_epoch, aux), grads = value_and_grad(nn_params,sensor_data, ic_epoch)
 
-        # Estimate the different losses
-        data_loss_epoch = data_loss(nn_params,sensor_data, cfg)
-        ic_loss_epoch = ic_loss(nn_params,ic_epoch, cfg)
+        # Gather the different losses
+        (data_loss_epoch, ic_loss_epoch) = aux
 
         # Update the nn_params and losses dictionary
         losses["total"].append(loss_func_epoch)
@@ -95,15 +99,18 @@ def train_pinn(sensor_data: jnp.ndarray, cfg: Config) -> tuple[dict, dict]:
     # Define the loss function and compile with JIT
     @jax.jit
     def loss_func(pinn_params, sensor_data, ic_epoch, interior_epoch, bc_epoch): 
-        data_loss_epoch = cfg.lambda_data * data_loss(pinn_params["nn"], sensor_data, cfg)
-        ic_loss_epoch = cfg.lambda_ic * ic_loss(pinn_params["nn"], ic_epoch, cfg)
-        physics_loss_epoch = cfg.lambda_physics * physics_loss(pinn_params, interior_epoch, cfg)
-        bc_loss_epoch = cfg.lambda_bc * bc_loss(pinn_params, bc_epoch, cfg)
+        data_loss_epoch =  data_loss(pinn_params["nn"], sensor_data, cfg)
+        ic_loss_epoch = ic_loss(pinn_params["nn"], ic_epoch, cfg)
+        physics_loss_epoch = physics_loss(pinn_params, interior_epoch, cfg)
+        bc_loss_epoch = bc_loss(pinn_params, bc_epoch, cfg)
 
-        return data_loss_epoch + ic_loss_epoch + physics_loss_epoch + bc_loss_epoch
+        loss_func_epoch = cfg.lambda_data*data_loss_epoch + cfg.lambda_ic*ic_loss_epoch + cfg.lambda_physics*physics_loss_epoch + cfg.lambda_bc*bc_loss_epoch
+        aux = (data_loss_epoch, ic_loss_epoch, physics_loss_epoch, bc_loss_epoch)
+
+        return loss_func_epoch, aux
 
     # Compile value_and_grad with JIT
-    value_and_grad = jax.jit(jax.value_and_grad(loss_func)) 
+    value_and_grad = jax.jit(jax.value_and_grad(loss_func, has_aux=True)) 
 
     for _ in tqdm(range(cfg.num_epochs), desc="Training PINN"): 
 
@@ -113,15 +120,12 @@ def train_pinn(sensor_data: jnp.ndarray, cfg: Config) -> tuple[dict, dict]:
         bc_epoch, key = sample_bc(key, cfg) 
 
         # Estimate total loss and gradients
-        loss_func_epoch, grads = value_and_grad(
+        (loss_func_epoch, aux), grads = value_and_grad(
             pinn_params, sensor_data, ic_epoch, interior_epoch, bc_epoch
         )
 
-        # Estimate each loss 
-        data_loss_epoch = data_loss(pinn_params["nn"], sensor_data, cfg) 
-        ic_loss_epoch = ic_loss(pinn_params["nn"], ic_epoch, cfg) 
-        physics_loss_epoch = physics_loss(pinn_params, interior_epoch, cfg) 
-        bc_loss_epoch = bc_loss(pinn_params, bc_epoch, cfg)
+        # Gather each loss 
+        (data_loss_epoch, ic_loss_epoch, physics_loss_epoch, bc_loss_epoch) = aux
 
         # Log the different losses
         losses["total"].append(loss_func_epoch) 
