@@ -46,7 +46,7 @@ def main():
         x, y, t, T_PINN, title="PINN", save_path="output/pinn/pinn_animation.gif"
     )
 
-    fig, axs = plt.subplots(3, 1, figsize=(10, 5))
+    fig, axs = plt.subplots(3, 2, figsize=(9, 14))
 
     # Gather different losses
     data_loss = losses["data"]
@@ -58,25 +58,25 @@ def main():
     num_loss = np.arange(len(total_loss))
 
     # Plot the losses seperately 
-    axs[0].plot(num_loss, data_loss, '-r')
-    axs[0].set_title('Data loss')
-    axs[0].set_xlabel('Epoch')
+    axs[0, 0].plot(num_loss, data_loss, '-r')
+    axs[0, 0].set_title('Data loss')
+    axs[0, 0].set_xlabel('Epoch')
 
-    axs[1].plot(num_loss, ic_loss, '-g')
-    axs[1].set_title('IC loss')
-    axs[1].set_xlabel('Epoch')
+    axs[1, 0].plot(num_loss, ic_loss, '-g')
+    axs[1, 0].set_title('IC loss')
+    axs[1, 0].set_xlabel('Epoch')
 
-    axs[2].plot(num_loss, physics_loss, '-b')
-    axs[2].set_title('Physics loss')
-    axs[2].set_xlabel('Epoch')
+    axs[2, 0].plot(num_loss, physics_loss, '-b')
+    axs[2, 0].set_title('Physics loss')
+    axs[2, 0].set_xlabel('Epoch')
 
-    axs[3].plot(num_loss, bc_loss, '-g')
-    axs[3].set_title('BC loss')
-    axs[3].set_xlabel('Epoch')
+    axs[0, 1].plot(num_loss, bc_loss, '-g')
+    axs[0, 1].set_title('BC loss')
+    axs[0, 1].set_xlabel('Epoch')
 
-    axs[4].plot(num_loss, total_loss, '-b')
-    axs[4].set_title('Total loss')
-    axs[4].set_xlabel('Epoch')
+    axs[1, 1].plot(num_loss, total_loss, '-b')
+    axs[1, 1].set_title('Total loss')
+    axs[1, 1].set_xlabel('Epoch')
 
     plt.tight_layout()
     plt.show()
