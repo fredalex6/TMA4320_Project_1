@@ -1,5 +1,7 @@
 """Script for running and plotting the FDM solution."""
 
+import time
+
 from viz import create_animation, plot_snapshots
 
 from project import (
@@ -12,7 +14,12 @@ def main():
     cfg = load_config("config.yaml")
 
     print("Solving heat equation with FDM...")
+    
+    start = time.time()
     x, y, t, T_fdm = solve_heat_equation(cfg)
+    end = time.time()
+
+    print("--- %s seconds ---" % (end - start))
 
     print("\nGenerating FDM visualizations...")
     plot_snapshots(
