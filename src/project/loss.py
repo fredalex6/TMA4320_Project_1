@@ -88,11 +88,12 @@ def physics_loss(pinn_params, interior_points, cfg: Config):
     #######################################################################
     # Oppgave 5.2: Start
     #######################################################################
-    
-    nn_params = pinn_params['nn']
-    
-    def _pde_residual_scalar(xi, yi, ti):
+        
+    def _pde_residual_scalar(pinn_params, xi, yi, ti, cfg):
         """Compute PDE residual at a single point."""
+
+        nn_params = pinn_params['nn']
+
         alpha = jnp.exp(pinn_params["log_alpha"])
         power = jnp.exp(pinn_params["log_power"])
         
@@ -111,7 +112,10 @@ def physics_loss(pinn_params, interior_points, cfg: Config):
         return f_t - alpha * (f_xx + f_yy) - source
     
     # Vectorize the residuals
-    residuals = vmap(_pde_residual_scalar)(x, y, t)
+    residuals = vmap(
+        lambda xi, yi, ti: _pde_residual_scalar(
+            pinn_params, xi, yi, ti, cfg
+    ))(x, y, t)
 
     # Evaluate the physics loss
     physics_loss_val = jnp.mean(residuals**2)
