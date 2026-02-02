@@ -1,36 +1,53 @@
 """Finite Difference Method solver for the 2D heat equation."""
 
+import jax
 import numpy as np
+import jax.numpy as jnp
+from jax import Array, lax
 
 from .config import Config
 
 
-def conjugate_method(cfg: Config, A: np.ndarray, b: np.ndarray, x: np.ndarray, tol = 1e-8) -> np.ndarray:
-    """Solves a linear system Ax = b using a conjugate method"""
+@jax.jit
+def conjugate_method(A: Array, b: Array, x0: Array, max_iter=int, tol=1e-8) -> Array:
+    """Bruker en konjugert metode for å løse ligningssystemet"""
 
-    x_k = x.flatten()
-    N = cfg.nx * cfg.ny
+    # Konverter til numpy arrays
+    A = jnp.asarray(A)
+    b = jnp.asarray(b)
+    x0 = jnp.asarray(x0).flatten()
 
-    # Oppstart
-    r_k = b - A @ x_k
-    p_k = r_k
+    r0 = b - A @ x0 # Første residual
+    p0 = r0 # Første konjugert retning
 
-    for k in range(N):
+    # Returner False dersom toleransen er nådd
+    def tol_cond(state):
+        x, r, p, k = state
 
-        alpha_k = np.dot(r_k.transpose(), r_k) / np.dot(p_k.transpose(), (A @ p_k))
-        x_k = x_k + alpha_k * p_k
+        return (jnp.linalg.norm(r) > tol) & (k < max_iter)
 
-        r_next = r_k - alpha_k * (A @ p_k)
+    # Hvert steg i while løkken
+    def cg_step(state):
+        x, r, p, k = state
 
-        if np.linalg.norm(r_next) < tol:
-            break
+        alpha = jnp.dot(r, r) / jnp.dot(p, (A @ p))
 
-        p_next = r_next + np.dot(r_next.transpose(), r_next)/np.dot(r_k.transpose(), r_k) * p_k
+        x_new = x + alpha * p # Neste vektor "nærmere" løsningen
+        r_new = r - alpha * (A @ p) # Neste residual
 
-        r_k = r_next
-        p_k = p_next
+        beta = jnp.dot(r_new, r_new) / jnp.dot(r, r)
+        p_new = r_new + beta * p # Neste konjugert vektor
 
-    return x_k
+        return (x_new, r_new, p_new, k + 1)
+
+
+    # Nulltilstanden
+    state0 = (x0, r0, p0, 0)
+
+    # Sluttilstanden
+    x_final, r_final, p_final, k = lax.while_loop(tol_cond, cg_step, state0)
+    
+    return x_final
 
 
 def solve_heat_equation(
@@ -75,7 +92,8 @@ def solve_heat_equation(
         b = _build_rhs(cfg, T_curr, X, Y, dx, dy, dt, t_next)
 
         # Oppdaterer arrayet T
-        T[i+1, :, :] = conjugate_method(cfg, A, b, T_curr).reshape(cfg.nx, cfg.ny)
+        max_iter = cfg.nx * cfg.ny
+        T[i+1, :, :] = conjugate_method(A, b, T_curr, max_iter).reshape(cfg.nx, cfg.ny)
 
     return x, y, t, T
 
