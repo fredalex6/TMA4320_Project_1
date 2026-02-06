@@ -44,8 +44,6 @@ def main():
         x, y, t, T_NN, title="NN", save_path="output/nn/nn_animation.gif"
     )
 
-    fig, axs = plt.subplots(3, 1, figsize=(10, 5))
-
     # Gather different losses
     data_loss = losses["data"]
     ic_loss = losses["ic"]
@@ -53,21 +51,20 @@ def main():
 
     num_loss = np.arange(len(total_loss))
 
-    # Plot the losses seperately 
-    axs[0].plot(num_loss, data_loss, '-r')
-    axs[0].set_title('Data loss')
-    axs[0].set_xlabel('Epoch')
+    plt.figure(figsize=(10, 8))
 
-    axs[1].plot(num_loss, ic_loss, '-g')
-    axs[1].set_title('IC loss')
-    axs[1].set_xlabel('Epoch')
+    # Plot the different losses 
+    plt.plot(num_loss, data_loss, "r", label="Data loss")
+    plt.plot(num_loss, ic_loss, "y", label="IC loss")
 
-    axs[2].plot(num_loss, total_loss, '-b')
-    axs[2].set_title('Total loss')
-    axs[2].set_xlabel('Epoch')
+    # Plot the total loss
+    plt.plot(num_loss, total_loss, "m", label="Total loss")
 
-    plt.tight_layout()
+    plt.xlabel("Epoch")
+    plt.title("Evolution of losses during training of NN")
+    plt.legend()
     plt.show()
+
     #######################################################################
     # Oppgave 4.4: Slutt
     #######################################################################
