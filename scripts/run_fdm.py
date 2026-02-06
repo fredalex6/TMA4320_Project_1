@@ -15,6 +15,7 @@ def main():
 
     print("Solving heat equation with FDM...")
     
+    # Record the time it takes to solve the linear system (for comparison with Conjugate Method)
     start = time.time()
     x, y, t, T_fdm = solve_heat_equation(cfg)
     end = time.time()

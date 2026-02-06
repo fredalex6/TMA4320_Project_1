@@ -47,7 +47,7 @@ def init_pinn_params(cfg: Config, seed: int | None = None):
     # Initialize NN parameters
     nn_params = init_nn_params(cfg, key, seed)
     
-    # Initialize PINN parameters 
+    # Initialize PINN parameters
     pinn_params = {
         'nn': nn_params, 
         'log_alpha': jax.random.normal(key, (1,)), 
@@ -108,7 +108,7 @@ def forward(
     for W, b in nn_params[:-1]:
         a = sigma(a @ W + b)
 
-    # Determine the final 
+    # Determine the final output layer
     W_out, b_out = nn_params[-1]
    
     # Flatten array, but don't use the activation function

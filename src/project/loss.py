@@ -101,7 +101,7 @@ def physics_loss(pinn_params, interior_points, cfg: Config):
         def f(x, y, t):
             return forward(nn_params, x, y, t, cfg)
 
-        # Find partial derivatives
+        # Compute partial derivatives
         f_t  = grad(f, 2)(xi, yi, ti)
         f_xx = grad(grad(f, 0), 0)(xi, yi, ti)
         f_yy = grad(grad(f, 1), 1)(xi, yi, ti)

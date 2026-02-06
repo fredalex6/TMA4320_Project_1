@@ -10,41 +10,41 @@ from .config import Config
 
 @jax.jit
 def conjugate_method(A: Array, b: Array, x0: Array, max_iter=int, tol=1e-8) -> Array:
-    """Bruker en konjugert metode for å løse ligningssystemet"""
+    """Use a conjugate method to solve the linear system."""
 
-    # Konverter til numpy arrays
+    # Convert to JAX arrays
     A = jnp.asarray(A)
     b = jnp.asarray(b)
     x0 = jnp.asarray(x0).flatten()
 
-    r0 = b - A @ x0 # Første residual
-    p0 = r0 # Første konjugert retning
+    r0 = b - A @ x0  # First residual
+    p0 = r0  # First conjugate direction
 
-    # Returner False dersom toleransen er nådd
+    # Return False if tolerance is reached
     def tol_cond(state):
         x, r, p, k = state
 
         return (jnp.linalg.norm(r) > tol) & (k < max_iter)
 
-    # Hvert steg i while løkken
+    # Each step in the while loop
     def cg_step(state):
         x, r, p, k = state
 
         alpha = jnp.dot(r, r) / jnp.dot(p, (A @ p))
 
-        x_new = x + alpha * p # Neste vektor "nærmere" løsningen
-        r_new = r - alpha * (A @ p) # Neste residual
+        x_new = x + alpha * p  # Next vector "closer" to solution
+        r_new = r - alpha * (A @ p)  # Next residual
 
         beta = jnp.dot(r_new, r_new) / jnp.dot(r, r)
-        p_new = r_new + beta * p # Neste konjugert vektor
+        p_new = r_new + beta * p  # Next conjugate vector
 
         return (x_new, r_new, p_new, k + 1)
 
 
-    # Nulltilstanden
+    # Initial state
     state0 = (x0, r0, p0, 0)
 
-    # Sluttilstanden
+    # Final state
     x_final, r_final, p_final, k = lax.while_loop(tol_cond, cg_step, state0)
     
     return x_final
@@ -74,10 +74,10 @@ def solve_heat_equation(
 
     X, Y = np.meshgrid(x, y, indexing="ij")
 
-    # Initialisering av temperaturvektoren
+    # Initialize temperature vector
     T = np.zeros((cfg.nt, cfg.nx, cfg.ny))
 
-    # Fyller første tidssteg med T_outside
+    # Fill first time step with T_outside
     T[0, :, :] = cfg.T_outside
 
     for i in range(0, cfg.nt-1):
@@ -85,13 +85,13 @@ def solve_heat_equation(
         T_curr = T[i, :, :]
         t_next = t[i+1]
 
-        # Matrisen A i det lineære systemet
+        # Matrix A in the linear system
         A = _build_matrix(cfg, dx, dy, dt)
 
-        # RHS
+        # Right-hand side
         b = _build_rhs(cfg, T_curr, X, Y, dx, dy, dt, t_next)
 
-        # Oppdaterer arrayet T
+        # Update array T
         max_iter = cfg.nx * cfg.ny
         T[i+1, :, :] = conjugate_method(A, b, T_curr, max_iter).reshape(cfg.nx, cfg.ny)
 

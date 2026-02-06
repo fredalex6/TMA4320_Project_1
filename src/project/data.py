@@ -30,10 +30,10 @@ def generate_training_data(
     y = np.linspace(cfg.y_min, cfg.y_max, cfg.ny)
     t = np.linspace(cfg.t_min, cfg.t_max, cfg.nt)
 
-    # Bruk den numeriske løseren for T
+    # Use the numerical solver for T
     T_fdm = solve_heat_equation(cfg)[3]
 
-    # Lag sensor data
+    # Generate sensor data
     sensor_data = _generate_sensor_data(x, y, t, T_fdm, cfg)
 
     #######################################################################

@@ -33,10 +33,10 @@ def solve_heat_equation(
     # Oppgave 3.2: Start
     #######################################################################
 
-    # Initialisering av temperaturvektoren
+    # Initialize temperature vector
     T = np.zeros((cfg.nt, cfg.nx, cfg.ny))
 
-    # Fyller første tidssteg med T_outside
+    # Fill first time step with T_outside
     T[0, :, :] = cfg.T_outside
 
     for i in range(0, cfg.nt-1):
@@ -44,13 +44,13 @@ def solve_heat_equation(
         T_curr = T[i, :, :]
         t_next = t[i+1]
 
-        # Matrisen A i det lineære systemet
+        # Matrix A in the linear system
         A = _build_matrix(cfg, dx, dy, dt)
 
-        # RHS
+        # Right-hand side
         b = _build_rhs(cfg, T_curr, X, Y, dx, dy, dt, t_next)
 
-        # Oppdaterer arrayet T
+        # Update array T
         T[i+1, :, :] = np.linalg.solve(A, b).reshape(cfg.nx, cfg.ny)
 
 
