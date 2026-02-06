@@ -29,11 +29,13 @@ class Config:
     source_locations: jnp.ndarray
     source_sizes: jnp.ndarray
     source_strength: float
+    num_rooms: int
 
     # Grid
     nx: int
     ny: int
     nt: int
+    nmu: int
 
     # Sensors
     sensor_rate: float
@@ -71,6 +73,25 @@ class Config:
     def heat_source(self, x, y, t):
         """Heat source term at point (x, y, t)."""
         return jnp.where(self.is_source(x, y), self.source_strength, 0.0)
+    
+
+    # Create new identical functions for the amortised training
+    def is_source_am(self, x, y, cx, cy):
+        """Check if point(s) are inside any heat source."""
+        # source_sizes: (S,)
+        sizes = self.source_sizes  # (S,)
+
+        # Broadcast x, y against source centers
+        # x, y can be scalars or arrays of any shape
+        dx = jnp.abs(x - cx)  # (S, ...) broadcasts with x
+        dy = jnp.abs(y - cy)  # (S, ...) broadcasts with y
+
+        inside = (dx <= sizes[:, None, None]) & (dy <= sizes[:, None, None])
+        return jnp.any(inside, axis=0)  # same shape as x, y
+
+    def heat_source_am(self, x, y, t, cx, cy):
+        """Heat source term at point (x, y, t)."""
+        return jnp.where(self.is_source_am(x, y, cx, cy), self.source_strength, 0.0)
 
 
 def load_config(path: str | Path = "config.yaml") -> Config:
@@ -99,10 +120,12 @@ def load_config(path: str | Path = "config.yaml") -> Config:
             data["source"]["sizes"],
         ),
         source_strength=data["source"]["strength"],
+        num_rooms=data["source"]["num_rooms"],
         # Grid
         nx=data["grid"]["nx"],
         ny=data["grid"]["ny"],
         nt=data["grid"]["nt"],
+        nmu=data["grid"]["nmu"],
         # Sensors
         sensor_rate=data["sensors"]["measure_rate"],
         sensor_noise=data["sensors"]["noise_std"],
