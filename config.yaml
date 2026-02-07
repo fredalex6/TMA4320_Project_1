@@ -40,9 +40,9 @@ source:
 
 # Discretization
 grid:
-    nx: 10 # Spatial points in x (set to 100 for better resolution)
-    ny: 10 # Spatial points in y (set to 50 for better resolution)
-    nt: 10 # Time steps
+    nx: 50 # Spatial points in x (set to 100 for better resolution)
+    ny: 25 # Spatial points in y (set to 50 for better resolution)
+    nt: 50 # Time steps
     nmu: 50 # Number of heat source positions
     nt_pos: 10 # Time steps in task 3.4
 
