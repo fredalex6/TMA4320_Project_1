@@ -14,61 +14,73 @@ time:
 
 # Physical parameters
 physics:
-  alpha: 0.25           # Thermal diffusivity
-  k: 0.04               # Thermal conductivity
-  h: 0.00               # Heat transfer coefficient (0 = perfectly insulated walls)
-  T_outside: 0.0        # Outside temperature (constant)
+    alpha: 0.25 # Thermal diffusivity
+    k: 0.04 # Thermal conductivity
+    h: 0.00 # Heat transfer coefficient (0 = perfectly insulated walls)
+    T_outside: 0.0 # Outside temperature (constant)
+    varmekapasitet: 1200 # J/(m^3*K)
 
 # Heat source configuration
 source:
-  locations:
-    - [5.0, 2.5]        # Heat source position (x, y)
-    # - [1.0, 1.0]        # Additional heat source position
-  sizes:
-    - 0.5                # Heat source size (meters)
-    # - 0.3                # Additional heat source size
+    locations:
+        # Start sources in corners for better optimization
+        - [5.0, 5.0] # Heat source position (x, y)
+        #- [7.5, 2.5] # Additional heat source position
+        #- [2.5, 7.5]
+        #- [7.5, 7.5]
+    sizes:
+        - 0.5 # Heat source size (meters)
+        # Additional heat source size
+        #- 0.5
+        #- 0.5
+        #- 0.5
 
-  strength: 15.0         # Heat source strength (degrees/hour)
-  num_rooms: 20          # Number of different rooms during amortised training
+    strength: 15.0 # Heat source strength (degrees/hour)
+    num_rooms: 20 # Number of different rooms during amortised training
 
 # Discretization
 grid:
-  nx: 50                # Spatial points in x (set to 100 for better resolution)
-  ny: 25                # Spatial points in y (set to 50 for better resolution)
-  nt: 50                # Time steps
-  nmu: 50               # Number of heat source positions
+    nx: 10 # Spatial points in x (set to 100 for better resolution)
+    ny: 10 # Spatial points in y (set to 50 for better resolution)
+    nt: 10 # Time steps
+    nmu: 50 # Number of heat source positions
+    nt_pos: 10 # Time steps in task 3.4
 
 # Sensor configuration
 sensors:
-  measure_rate: 1.0     # Hours between measurements
-  noise_std: 0.5        # Measurement noise (std dev in degrees)
+    measure_rate: 1.0 # Hours between measurements
+    noise_std: 0.5 # Measurement noise (std dev in degrees)
 
-  locations:
-    - [5.0, 2.5]        # Center of room
-    # At the center and corner of walls
-    - [5.0, 5.0]
-    - [5.0, 0.0]
-    - [0.0, 2.5]
-    - [10.0, 2.5]
-    - [0.0, 0.0]
-    - [0.0, 5.0]
-    - [10.0, 0.0]
-    - [10.0, 5.0]
+    locations:
+        - [5.0, 2.5] # Center of room
+        # At the center and corner of walls
+        - [5.0, 5.0]
+        - [5.0, 0.0]
+        - [0.0, 2.5]
+        - [10.0, 2.5]
+        - [0.0, 0.0]
+        - [0.0, 5.0]
+        - [10.0, 0.0]
+        - [10.0, 5.0]
 
 # Training parameters
 training:
-  layer_sizes: [3, 32, 32, 1]
-  learning_rate: 0.001
-  num_epochs: 5000
-  seed: 42
+    layer_sizes: [3, 32, 32, 1]
+    learning_rate: 0.001
+    num_epochs: 5000
+    seed: 42
 
-  # Loss weights
-  lambda_physics: 1.0
-  lambda_ic:  1.0
-  lambda_bc: 1.0
-  lambda_data: 1.0
+    # Loss weights
+    lambda_physics: 1.0
+    lambda_ic: 1.0
+    lambda_bc: 1.0
+    lambda_data: 1.0
 
-  # Sampling
-  num_collocation: 4096
-  num_ic: 512
-  num_bc: 512
+    # Loss params 3.4
+    lambda_jevn_varme: 0.1
+    lambda_varmetap: 1.0
+
+    # Sampling
+    num_collocation: 4096
+    num_ic: 512
+    num_bc: 512
