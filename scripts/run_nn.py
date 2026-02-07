@@ -44,6 +44,23 @@ def main():
         x, y, t, T_NN, title="NN", save_path="output/nn/nn_animation.gif"
     )
 
+    # Create plots for the error
+    T_err = T_NN - T_fdm
+
+    print("\nGenerating NN Error visualizations...")
+
+    plot_snapshots(
+        x,
+        y,
+        t,
+        T_err,
+        save_path="output/nn/nn_err_snapshots.png",
+    )
+    create_animation(
+        x, y, t, T_err, title="NN Error", save_path="output/nn/nn_err_animation.gif"
+    )
+
+
     # Gather different losses
     data_loss = losses["data"]
     ic_loss = losses["ic"]

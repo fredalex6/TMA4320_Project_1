@@ -46,6 +46,24 @@ def main():
         x, y, t, T_PINN, title="PINN", save_path="output/pinn/pinn_animation.gif"
     )
 
+
+    # Create plots for the error
+    T_err = T_PINN - T_fdm
+
+    print("\nGenerating PINN Error visualizations...")
+
+    plot_snapshots(
+        x,
+        y,
+        t,
+        T_err,
+        save_path="output/pinn/pinn_err_snapshots.png",
+    )
+    create_animation(
+        x, y, t, T_err, title="PINN Error", save_path="output/pinn/pinn_err_animation.gif"
+    )
+
+
     # Gather different losses
     data_loss = losses["data"]
     ic_loss = losses["ic"]
