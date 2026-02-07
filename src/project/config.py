@@ -24,6 +24,7 @@ class Config:
     k: float
     h: float
     T_outside: float
+    varmekapasitet: float
 
     # Source
     source_locations: jnp.ndarray
@@ -36,6 +37,7 @@ class Config:
     ny: int
     nt: int
     nmu: int
+    nt_pos: int
 
     # Sensors
     sensor_rate: float
@@ -51,6 +53,10 @@ class Config:
     lambda_ic: float
     lambda_bc: float
     lambda_data: float
+    # 3.4
+    lambda_jevn_varme: float
+    lambda_varmetap: float
+
     num_collocation: int
     num_ic: int
     num_bc: int
@@ -92,6 +98,55 @@ class Config:
     def heat_source_am(self, x, y, t, cx, cy):
         """Heat source term at point (x, y, t)."""
         return jnp.where(self.is_source_am(x, y, cx, cy), self.source_strength, 0.0)
+    
+    #####3.4
+    ### We cannot have bool, because then the derivative = 0
+    ### There we use a smooth approximation
+
+    def is_source_34(self, x, y, new_source_locations):
+        """Check if point(s) are inside any heat source."""
+        # source_locations: (S, 2), source_sizes: (S,)
+        cx = new_source_locations[:, 0]  # (S,)
+        cy = new_source_locations[:, 1]  # (S,)
+        sizes = self.source_sizes  # (S,)
+
+        # Broadcast x, y against source centers
+        # x, y can be scalars or arrays of any shape
+        dx = jnp.abs(x - cx[:, None, None])  # (S, ...) broadcasts with x
+        dy = jnp.abs(y - cy[:, None, None])  # (S, ...) broadcasts with y
+
+        inside = (dx <= sizes[:, None, None]) & (dy <= sizes[:, None, None])
+        return jnp.any(inside, axis=0)  # same shape as x, y
+
+    def heat_source_34(self, x, y, new_source_locations):
+        """Heat source term at point (x, y, t)."""
+        return jnp.where(self.is_source_34(x, y, new_source_locations), self.source_strength, 0.0)
+
+    def is_source_34_soft(self, x, y, new_source_locations):
+        # cx, cy: (S,)
+        cx = new_source_locations[:, 0]
+        cy = new_source_locations[:, 1]
+        sizes = jnp.asarray(self.source_sizes)
+
+        # distance from source centers
+        dx = jnp.abs(x - cx[:, None, None])
+        dy = jnp.abs(y - cy[:, None, None])
+
+        # Use fixed softness to avoid division by zero/infinity issues
+        softness = 5.0
+
+        # smooth mask: sigmoid approximation
+        mask_x = 1 / (1 + jnp.exp(softness * (dx - sizes[:, None, None])))
+        mask_y = 1 / (1 + jnp.exp(softness * (dy - sizes[:, None, None])))
+
+        # combined mask
+        mask = mask_x * mask_y
+
+        # combine all sources
+        return jnp.clip(jnp.sum(mask, axis=0), 0.0, 1.0)
+
+    def heat_source_34_soft(self, x, y, new_source_locations):
+        return jnp.asarray(self.source_strength) * self.is_source_34_soft(x, y, new_source_locations)
 
 
 def load_config(path: str | Path = "config.yaml") -> Config:
@@ -112,6 +167,7 @@ def load_config(path: str | Path = "config.yaml") -> Config:
         k=data["physics"]["k"],
         h=data["physics"]["h"],
         T_outside=data["physics"]["T_outside"],
+        varmekapasitet=data["physics"]["varmekapasitet"],  # make sure you add this too
         # Source
         source_locations=jnp.asarray(
             data["source"]["locations"],
@@ -125,7 +181,8 @@ def load_config(path: str | Path = "config.yaml") -> Config:
         nx=data["grid"]["nx"],
         ny=data["grid"]["ny"],
         nt=data["grid"]["nt"],
-        nmu=data["grid"]["nmu"],
+        nmu=data["grid"]["nmu"], # For amortization
+        nt_pos = data["grid"]["nt_pos"], # 3.4
         # Sensors
         sensor_rate=data["sensors"]["measure_rate"],
         sensor_noise=data["sensors"]["noise_std"],
@@ -141,6 +198,9 @@ def load_config(path: str | Path = "config.yaml") -> Config:
         lambda_ic=data["training"]["lambda_ic"],
         lambda_bc=data["training"]["lambda_bc"],
         lambda_data=data["training"]["lambda_data"],
+        # 3.4
+        lambda_jevn_varme = data["training"]["lambda_jevn_varme"],
+        lambda_varmetap = data["training"]["lambda_varmetap"],
         num_collocation=data["training"]["num_collocation"],
         num_ic=data["training"]["num_ic"],
         num_bc=data["training"]["num_bc"],
