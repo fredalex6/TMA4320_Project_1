@@ -60,7 +60,7 @@ def optimize_pos_fun(cfg):
 
         sorce_locations, adam_state = adam_step(sorce_locations, grads, adam_state, lr=cfg.learning_rate)
         
-        # Clip positions to stay within room boundaries
+        # make sure within room boundaries
         sorce_locations = jnp.clip(sorce_locations, 
                                    jnp.array([[cfg.x_min + 0.5, cfg.y_min + 0.5]]),
                                    jnp.array([[cfg.x_max - 0.5, cfg.y_max - 0.5]]))

@@ -100,15 +100,14 @@ class Config:
         return jnp.where(self.is_source_am(x, y, cx, cy), self.source_strength, 0.0)
     
     #####3.4
-    ### We cannot have bool, because then the derivative = 0
-    ### There we use a smooth approximation
+    
 
     def is_source_34(self, x, y, new_source_locations):
         """Check if point(s) are inside any heat source."""
-        # source_locations: (S, 2), source_sizes: (S,)
-        cx = new_source_locations[:, 0]  # (S,)
-        cy = new_source_locations[:, 1]  # (S,)
-        sizes = self.source_sizes  # (S,)
+        # source_locations:
+        cx = new_source_locations[:, 0]  
+        cy = new_source_locations[:, 1]  
+        sizes = self.source_sizes  
 
         # Broadcast x, y against source centers
         # x, y can be scalars or arrays of any shape

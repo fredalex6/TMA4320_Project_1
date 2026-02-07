@@ -110,7 +110,7 @@ def _build_matrix_34(cfg: Config, dx, dy, dt):
 
 def _build_rhs_34(cfg: Config, T_curr, X, Y, dx, dy, dt, t_next, new_source_locations):
     """Build right-hand side for implicit system."""
-    rhs = T_curr ##########change .copy() -> just keep reference (JAX immutable)
+    rhs = T_curr 
 
     # Heat source
     q = jnp.array(cfg.heat_source_34_soft(X, Y, new_source_locations))
