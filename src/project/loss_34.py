@@ -11,10 +11,10 @@ def varmetap(x, y, temp, cfg):
     Fixed: Correct indexing for temp shape (nt, nx, ny)
     """
     # Average temperature at start and end
-    T_initial = jnp.mean(temp[0, :, :])    # First time step
-    T_final = jnp.mean(temp[-1, :, :])     # Last time step
+    T_initial = jnp.mean(temp[0, :, :])    
+    T_final = jnp.mean(temp[-1, :, :])     
     
-    # Heat loss amount: we want to minimize the drop
+    # Heat loss 
     varmetap_val = T_initial - T_final
     
     return varmetap_val

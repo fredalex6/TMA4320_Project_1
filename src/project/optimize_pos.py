@@ -40,7 +40,7 @@ def optimize_pos_fun(cfg):
     #Iterations, time_index, losses
     N = 150
     time_inx = cfg.nt_pos
-    losses = {"loss_func_step": [], "varme_tap": [], "Loss_stabil_temp": [], "spread_penalty": []}  # Fill with loss histories
+    losses = {"loss_func_step": [], "varme_tap": [], "Loss_stabil_temp": [], "spread_penalty": []}  
 
     #compile value and grad
     value_and_grad = jax.value_and_grad(total_loss_34, has_aux=True)
