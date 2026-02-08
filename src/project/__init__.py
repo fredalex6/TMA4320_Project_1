@@ -7,12 +7,14 @@ from .optim import adam_step, init_adam
 from .sampling import sample_bc, sample_ic, sample_interior
 from .train import train_nn, train_pinn
 
-# Import for Adaptive Loss Weighting
+
+# 3.5 Import for conjugative gradient method
+#from .fdm_cg import solve_heat_equation
+
+# 5.7 Import for Adaptive Loss Weighting
 #from .train_woptim import train_nn, train_pinn
 
-
-
-# These ones should be imported when using
+# 5.9 These ones should be imported instead when using amortised training
 """from .config import Config, load_config
 from .data_am import generate_training_data
 from .fdm_am import solve_heat_equation
