@@ -5,11 +5,6 @@ from tqdm import tqdm
 
 #@jax.jit
 def varmetap(x, y, temp, cfg):
-    """Heat loss metric: temperature drop from start to end.
-    Smaller drop = better heat retention.
-    
-    Fixed: Correct indexing for temp shape (nt, nx, ny)
-    """
     # Average temperature at start and end
     T_initial = jnp.mean(temp[0, :, :])    
     T_final = jnp.mean(temp[-1, :, :])     
