@@ -1,7 +1,5 @@
-import jax
+
 import jax.numpy as jnp
-from jax import jit
-from tqdm import tqdm
 
 #@jax.jit
 def varmetap(x, y, temp, cfg):

@@ -102,7 +102,7 @@ def forward(
     for W, b in nn_params[:-1]:
         a = sigma(a @ W + b)
 
-    # Determine the final 
+    # Determine the final params 
     W_out, b_out = nn_params[-1]
    
     # Flatten array, but don't use the activation function

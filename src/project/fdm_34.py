@@ -1,10 +1,6 @@
 """Finite Difference Method solver for the 2D heat equation."""
 
-import numpy as np
-
-import jax
 import jax.numpy as jnp
-import numpy as np
 
 from .config import Config
 

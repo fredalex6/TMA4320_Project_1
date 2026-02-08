@@ -1,7 +1,5 @@
 """Script for optimizing sorce_locations."""
 
-import os
-
 import matplotlib.pyplot as plt
 import jax.numpy as jnp
 

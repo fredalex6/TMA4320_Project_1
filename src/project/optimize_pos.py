@@ -1,6 +1,5 @@
 import jax
 import jax.numpy as jnp
-from jax import jit
 from tqdm import tqdm
 
 from .optim import adam_step, init_adam
