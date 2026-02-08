@@ -24,7 +24,7 @@ physics:
 source:
     locations:
         # Start sources in corners for better optimization
-        - [5.0, 5.0] # Heat source position (x, y)
+        - [5.0, 2.5] # Heat source position (x, y)
         #- [7.5, 2.5] # Additional heat source position
         #- [2.5, 7.5]
         #- [7.5, 7.5]
