@@ -63,7 +63,6 @@ def main():
         x, y, t, T_err, title="PINN Error", save_path="output/pinn/pinn_err_animation.gif"
     )
 
-
     # Gather different losses
     data_loss = losses["data"]
     ic_loss = losses["ic"]
@@ -73,7 +72,7 @@ def main():
 
     num_loss = np.arange(len(total_loss))
 
-    plt.figure(figsize=(10, 8))
+    plt.figure(figsize=(10, 5))
 
     # Plot the different losses 
     plt.plot(num_loss, data_loss, "r", label="Data loss")
