@@ -47,7 +47,8 @@ def init_pinn_params(cfg: Config, seed: int | None = None):
     # Initialize NN parameters
     nn_params = init_nn_params(cfg, key, seed)
     
-    # Initialize PINN parameters
+    # Initialize PINN parameters, the values are somewhat arbitrary here
+    # but checks out with typical values
     pinn_params = {
         'nn': nn_params, 
         'log_alpha': jax.random.normal(key, (1,)), 
