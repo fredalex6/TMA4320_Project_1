@@ -1,4 +1,4 @@
-"""Script for optimizing sorce_locations."""
+"""Script for optimizing source_locations."""
 
 import matplotlib.pyplot as plt
 import jax.numpy as jnp
@@ -15,7 +15,7 @@ def main():
     print("solving optimized positions") 
 
 
-    sorce_locations, losses = optimize_pos_fun(cfg)
+    source_locations, losses = optimize_pos_fun(cfg)
     loss_func_step = losses["loss_func_step"]
     varmetap_step = losses["varme_tap"]
     loss_stabil_temp = losses["Loss_stabil_temp"]
@@ -45,7 +45,7 @@ def main():
     plt.tight_layout()
     plt.show()
 
-    print(sorce_locations)
+    print(source_locations)
 
 if __name__ == "__main__":
     main()
