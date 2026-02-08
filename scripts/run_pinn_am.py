@@ -1,18 +1,14 @@
-"""Script for training and plotting the PINN model."""
+"""Script for training and plotting the PINN model with amortised training."""
 
-import os
 import pickle
 
-import jax.numpy as jnp
-import matplotlib.pyplot as plt
 import numpy as np
 from viz import create_animation, plot_snapshots
 
 from project import (
-    generate_training_data,
     load_config,
     predict_grid,
-    train_pinn,
+    solve_heat_equation
 )
 
 
@@ -35,8 +31,8 @@ def main():
     t = np.linspace(cfg.t_min, cfg.t_max, cfg.nt)
 
     # Choose an arbitrary heat source position
-    test_cx = 0
-    test_cy = 0
+    test_cx = 2
+    test_cy = 2
 
     print(f"Predikerer temperaturutviklingen for varmekilde ved: ({test_cx:.2f}, {test_cy:.2f})")
 
@@ -55,6 +51,24 @@ def main():
     create_animation(
         x, y, t, T_PINN, title="PINN Amortised", save_path="output/pinn/pinn_am_animation.gif"
     )
+
+    # Make error plot
+    x, y, t, T_fdm = solve_heat_equation(cfg, test_cx, test_cy)
+    T_err = T_PINN - T_fdm
+
+    print("\nGenerating PINN Error visualizations...")
+
+    plot_snapshots(
+        x,
+        y,
+        t,
+        T_err,
+        save_path="output/pinn/pinn_am_err_snapshots.png",
+    )
+    create_animation(
+        x, y, t, T_err, title="PINN Amortised Error", save_path="output/pinn/pinn_am_err_animation.gif"
+    )
+
 
 if __name__ == "__main__":
     main()
