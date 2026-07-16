@@ -1,31 +1,8 @@
 # TMA4320 Prosjekt 1
-Denne teksten beskriver hvordan dere kan sette opp prosjektet, installere nødvendige pakker, og kjøre koden lokalt på deres maskin. Følg instruksjonene nøye for å sikre at alt fungerer som det skal.
-
-## Laste ned koden
-
-Følg instruksjonene i Git-forelesningen for å kopiere koden som en template og laste den ned til deres maskin. For de som ikke ønsker å bruke Git, kan dere laste ned en `zip`-fil med koden direkte fra GitHub og pakke den ut på deres maskin.
+1. prosjekt i TMA4320 Introduksjon til vitenskapelige beregninger, hvor det ble laget og reflektert rundt hvordan man kan bruke fysikk-informerte nevrale nettverk til å modellere varmeutvikling i et rom. Vi diskuterer blant annet i hvilken grad nettverket kan "lære" de fysiske parametrene inngående i varmeligningen og randbetingelsene, og ulike måter man kan lære nettverket på.
 
 
-## Åpne prosjektet i en kode-editor
-
-
-For å kjøre kommandoene nedenfor trenger dere også tilgang til en terminal. Det letteste er å åpne prosjektet i VSCode og bruke den innebygde terminalen (åpnes med `Ctrl`/`Cmd`+`j`). Eventuelt bruk terminalen på deres maskin direkte, men husk å navigere til mappen med koden først.
-
-## Installere Python
-
-Verifiser at dere har installert Python 3.13 eller nyere på deres maskin. Dette kan dere gjøre ved å åpne terminalen og skrive `python --version` eller `python3 --version`.
-
-```bash
-python --version
-# eller evt. (avhengig av systemet deres)
-python3 --version
-```
-
-Dersom dere får opp en versjon som er 3.13 eller nyere, er alt i orden. Hvis ikke, må dere installere Python. Følg instruksjonene på [Python Downloads](https://www.python.org/downloads/) for å installere nyeste versjon av Python på deres maskin.
-
-> Merk: Dersom dere måtte skrive `python3` for å få opp riktig versjon, må dere bruke `python3` i stedet for `python` i alle kommandoer nedenfor`
-
-## Installere pakker i et virtuelt miljø
+## Installer pakker i et virtuelt miljø
 
 ### pip og venv
 
@@ -59,26 +36,19 @@ Sett opp en kernel for Jupyter notebooks med
 python -m ipykernel install --user --name project
 ```
 
-Dersom du ikke får noen feil har alt gått fint!
-
-## Velge Interpreter i VSCode (dersom du bruker dette...)
-Etter du har satt opp prosjektet kan det hende du må velge riktig Python Iinterpreter i VSCode. Åpne kommandopalletten med `Ctrl`/`Cmd`+`Shift`+`P`, og søk etter `Python: Select Interpreter`. Velg deretter den som peker til `.venv`-mappen i prosjektet ditt.
-
 ## Kjøre kode
 
-Pass på at ditt virtuelle miljø er aktivert
+Pass på at det virtuelle miljøet er aktivert
 
 ```bash
 . .venv\bin\activate
 ```
 
-Vi kjører kode fra terminalen gjennom å skrive `python <filsti>`. Test at alt fungerer ved å kjøre `scripts/run_fdm.py` med kommandoen
+Kjør koden fra terminalen gjennom å skrive `python <filsti>`. Test at alt fungerer ved å kjøre `scripts/run_fdm.py` med kommandoen
 
 ```bash
 python scripts/run_fdm.py
 ```
-
-Dersom du ikke får noen feil så er alle pakker installert riktig, og du er klar til å begynne på prosjektet! Merk at output fra kjøringen vil selvfølgelig være gal siden vi ikke har implementert noe enda.
 
 For å kjøre tester på koden kan du bruke `pytest`. Kjør alle tester med kommandoen
 
