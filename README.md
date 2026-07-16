@@ -1,5 +1,5 @@
 # TMA4320 Prosjekt 1
-1. prosjekt i TMA4320 Introduksjon til vitenskapelige beregninger, hvor det ble laget og reflektert rundt hvordan man kan bruke fysikk-informerte nevrale nettverk til å modellere varmeutvikling i et rom. Vi diskuterer blant annet i hvilken grad nettverket kan "lære" de fysiske parametrene inngående i varmeligningen og randbetingelsene, og ulike måter man kan lære nettverket på.
+1\. prosjekt i TMA4320 Introduksjon til vitenskapelige beregninger, hvor det ble laget og reflektert rundt hvordan man kan bruke fysikk-informerte nevrale nettverk til å modellere varmeutvikling i et rom. Vi diskuterer blant annet i hvilken grad nettverket kan "lære" de fysiske parametrene inngående i varmeligningen og randbetingelsene, og ulike måter man kan lære nettverket på (batching, amortisering osv.)
 
 
 ## Installer pakker i et virtuelt miljø
